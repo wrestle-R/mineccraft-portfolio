@@ -4,6 +4,8 @@ Russel Daniel Paul’s standalone Minecraft portfolio, copied from the Minecraft
 
 The same world opens at `/` and `/minecraft`. The back links and résumé link lead to [the main portfolio](https://russel.is-a.dev).
 
+Live site: [mineccraft-portfolio.vercel.app](https://mineccraft-portfolio.vercel.app).
+
 ## Development
 
 Requires Node.js 20 or later.
@@ -33,3 +35,5 @@ No environment variables or API credentials are required.
 `minecraft/` contains the original scene, model, music, fonts, textures, model generation scripts, and build guides. Company logos needed by the experience live in `public/Techstack/`. The Monocraft font license is included in `minecraft/assets/fonts/OFL.txt`.
 
 Vercel builds this Vite project with `npm run build` and publishes `dist/`. `vercel.json` keeps the `/minecraft` entry point working on direct visits and reloads. Pushes to `main` deploy through the connected GitHub repository.
+
+The build also emits `404.html`, which Vercel serves with HTTP 404 for missing paths. It uses the same 3D house with a Minecraft error sign, a way back to the world, and a static landscape for reduced motion or devices without WebGL.

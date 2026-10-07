@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Canvas, useLoader } from "@react-three/fiber";
+import { Canvas, useLoader, useThree } from "@react-three/fiber";
 import {
   CanvasTexture,
   SRGBColorSpace,
@@ -135,6 +135,21 @@ function EntranceDetails({ preset }) {
     </>
   );
 }
+function HousePreview({ onReady, onFailure }) {
+  const { camera, gl } = useThree();
+  useEffect(() => {
+    camera.position.set(0, -4.35, 18.5);
+    camera.lookAt(0, 4, 0);
+    onReady?.();
+  }, [camera, onReady]);
+  useEffect(() => {
+    const lost = () => onFailure?.();
+    gl.domElement.addEventListener("webglcontextlost", lost);
+    return () => gl.domElement.removeEventListener("webglcontextlost", lost);
+  }, [gl, onFailure]);
+  return null;
+}
+
 export default function HouseScene({
   controller,
   onChapter,
@@ -142,6 +157,7 @@ export default function HouseScene({
   onProgress,
   onFailure,
   openPanel,
+  presentation = false,
 }) {
   const { period, preset } = useDaylight();
   const [visible, setVisible] = useState(!document.hidden);
@@ -179,12 +195,12 @@ export default function HouseScene({
       <DisplayBoard
         controller={controller}
         position={[0, 4.35, 4.05]}
-        kind="entrance"
-        title="RUSSEL DANIEL PAUL"
-        caption="Welcome to my corner of the world"
-        onClick={() => openPanel("about")}
+        kind={presentation ? "lost" : "entrance"}
+        title={presentation ? "WORLD NOT FOUND" : "RUSSEL DANIEL PAUL"}
+        caption={presentation ? "404 / Unexplored chunk" : "Welcome to my corner of the world"}
+        onClick={presentation ? undefined : () => openPanel("about")}
       />
-      {portfolio.projects.map((p, i) => (
+      {!presentation && portfolio.projects.map((p, i) => (
         <DisplayBoard
           controller={controller}
           key={p.id}
@@ -212,7 +228,7 @@ export default function HouseScene({
           </group>
         ))}
       </group>
-      {portfolio.experiences.map((e, i) => (
+      {!presentation && portfolio.experiences.map((e, i) => (
         <DisplayBoard
           controller={controller}
           key={i}
@@ -226,20 +242,20 @@ export default function HouseScene({
           onClick={() => openPanel(e.id)}
         />
       ))}
-      <DisplayBoard
+      {!presentation && <DisplayBoard
         controller={controller}
         position={[0, 2.5, -28.96]}
         title="LET’S BUILD."
         caption="Every good project starts with hello."
         onClick={() => openPanel("contact")}
-      />
-      <CameraRig
+      />}
+      {presentation ? <HousePreview onReady={onReady} onFailure={onFailure} /> : <CameraRig
         controller={controller}
         onChapter={onChapter}
         onReady={onReady}
         onFailure={onFailure}
         openPanel={openPanel}
-      />
+      />}
     </Canvas>
   );
 }

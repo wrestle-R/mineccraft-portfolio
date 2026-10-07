@@ -131,6 +131,7 @@ export const ThemeProvider = ({ children }) => {
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.repeat) return;
+      if (document.pointerLockElement) return;
       if (event.key.toLowerCase() !== 'd') return;
       if (isEditableTarget(event.target)) return;
       event.preventDefault();

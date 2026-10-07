@@ -15,7 +15,8 @@ export default function DisplayBoard({
 }) {
   const [map, setMap] = useState(null);
   const [hovered, setHovered] = useState(false);
-  const entrance = kind === "entrance";
+  const lost = kind === "lost";
+  const entrance = kind === "entrance" || lost;
   const width = entrance ? 5.5 : image ? 3.05 : 3.5;
   const height = entrance ? 1.75 : image ? 2.35 : 1.65;
   useEffect(() => {
@@ -46,15 +47,15 @@ export default function DisplayBoard({
         ctx.fillStyle = "#796343";
         ctx.font = "22px Monocraft, monospace";
         ctx.textAlign = "center";
-        ctx.fillText("WELCOME TO", w / 2, 74);
+        ctx.fillText(lost ? "UNEXPLORED CHUNK" : "WELCOME TO", w / 2, 74);
         ctx.fillStyle = "#30291f";
         ctx.font = "100px Monocraft, monospace";
-        ctx.fillText("RUSSEL", w / 2, 192);
+        ctx.fillText(lost ? "404" : "RUSSEL", w / 2, 192);
         ctx.font = "76px Monocraft, monospace";
-        ctx.fillText("DANIEL PAUL", w / 2, 282);
+        ctx.fillText(lost ? "WORLD NOT FOUND" : "DANIEL PAUL", w / 2, 282, 1160);
         ctx.fillStyle = "#796343";
         ctx.font = "22px Monocraft, monospace";
-        ctx.fillText("EXPLORE     BUILD     LEARN", w / 2, 352);
+        ctx.fillText(lost ? "RETURN TO SPAWN" : "EXPLORE     BUILD     LEARN", w / 2, 352);
       } else if (image) {
         ctx.fillStyle = "#b9ad91";
         ctx.font = "24px Monocraft, monospace";
@@ -124,7 +125,7 @@ export default function DisplayBoard({
         picture.onerror = null;
       }
     };
-  }, [title, caption, image, logo, subtitle, entrance]);
+  }, [title, caption, image, logo, subtitle, entrance, lost]);
   return (
     <group position={position} rotation={rotation}>
       <mesh position={[0, 0, -0.06]} castShadow receiveShadow>
@@ -168,7 +169,7 @@ export default function DisplayBoard({
         onPointerOut={() => setHovered(false)}
         onClick={(event) => {
           event.stopPropagation();
-          if (!controller.locked && !controller.moved && !controller.paused) onClick();
+          if (onClick && !controller?.locked && !controller?.moved && !controller?.paused) onClick();
         }}
       >
         <planeGeometry args={[width, height]} />
